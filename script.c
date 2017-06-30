@@ -282,14 +282,15 @@ void prepare_script_env(struct openconnect_info *vpninfo)
 	if (vpninfo->ip_info.nbns[2])
 		script_setenv(vpninfo, "INTERNAL_IP4_NBNS", vpninfo->ip_info.nbns[2], 1);
 
-	if (vpninfo->ip_info.domains[0])
-		script_setenv(vpninfo, "CISCO_DEF_DOMAIN", vpninfo->ip_info.domains[0], 0);
-	else
+	if (!vpninfo->ip_info.domains[0])
 		script_setenv(vpninfo, "CISCO_DEF_DOMAIN", NULL, 0);
-	if (vpninfo->ip_info.domains[1])
-		script_setenv(vpninfo, "CISCO_DEF_DOMAIN", vpninfo->ip_info.domains[1], 1);
-	if (vpninfo->ip_info.domains[2])
-		script_setenv(vpninfo, "CISCO_DEF_DOMAIN", vpninfo->ip_info.domains[2], 1);
+    else {
+        if (vpninfo->ip_info.domains[2])
+            script_setenv(vpninfo, "CISCO_DEF_DOMAIN", vpninfo->ip_info.domains[2], 1);
+        if (vpninfo->ip_info.domains[1])
+            script_setenv(vpninfo, "CISCO_DEF_DOMAIN", vpninfo->ip_info.domains[1], 1);
+		script_setenv(vpninfo, "CISCO_DEF_DOMAIN", vpninfo->ip_info.domains[0], 0);
+    }
 
 	if (vpninfo->ip_info.proxy_pac)
 		script_setenv(vpninfo, "CISCO_PROXY_PAC", vpninfo->ip_info.proxy_pac, 0);
