@@ -382,8 +382,9 @@ static int gpst_parse_config_xml(struct openconnect_info *vpninfo, xmlNode *xml_
 	vpninfo->esp_magic = inet_addr(vpninfo->ip_info.gateway_addr);
 	vpninfo->cstp_options = NULL;
 
-	for (ii = 0; ii < 3; ii++)
-		vpninfo->ip_info.dns[ii] = vpninfo->ip_info.nbns[ii] = NULL;
+	for (ii = 0; ii < 3; ii++) {
+		vpninfo->ip_info.dns[ii] = vpninfo->ip_info.nbns[ii] = vpninfo->ip_info.domains[ii] = NULL;
+    }
 	free_split_routes(vpninfo);
 
 	/* Parse config */
@@ -414,10 +415,9 @@ static int gpst_parse_config_xml(struct openconnect_info *vpninfo, xmlNode *xml_
 				if (!xmlnode_get_text(member, "member", &s))
 					vpninfo->ip_info.nbns[ii++] = add_option(vpninfo, "WINS", s);
 		} else if (xmlnode_is_named(xml_node, "dns-suffix")) {
-			for (ii=0, member = xml_node->children; member && ii<1; member=member->next)
+			for (ii=0, member = xml_node->children; member && ii<3; member=member->next)
 				if (!xmlnode_get_text(member, "member", &s)) {
-					vpninfo->ip_info.domain = add_option(vpninfo, "search", s);
-					ii++;
+					vpninfo->ip_info.domains[ii++] = add_option(vpninfo, "search", s);
 				}
 		} else if (xmlnode_is_named(xml_node, "access-routes")) {
 			for (member = xml_node->children; member; member=member->next) {

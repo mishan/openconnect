@@ -275,6 +275,7 @@ struct oc_ip_info {
 	const char *dns[3];
 	const char *nbns[3];
 	const char *domain;
+    const char *domains[3];
 	const char *proxy_pac;
 	int mtu;
 
